@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\vaccine-chain-bk.props" />
+</Project>

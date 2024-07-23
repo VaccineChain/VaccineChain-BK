@@ -1,0 +1,23 @@
+﻿version: '3.8'
+
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      SA_PASSWORD: "vaccinechain@123"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-server-data:/var/opt/mssql
+    networks:
+      - vaccine-chain-network
+
+volumes:
+  sql-server-data:
+
+networks:
+  vaccine-chain-network:
+    driver: bridge
