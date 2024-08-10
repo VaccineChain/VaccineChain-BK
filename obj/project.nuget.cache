@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "MjKguekFhO6ob//9D32tHMa72/pZZL7KP8O0pPYSP40ljBxVFoznO/nNc1QsucUV50madWxAO/oxRXg8zyjcpA==",
+  "dgSpecHash": "D/XCICOzu3pzKYztEJqeRamkcru4NQMSBtWmPm6FlvSUhwEb9Zq8l4RYrOEDw04HFTS2i96z8jWPL4pHepmc3g==",
   "success": true,
   "projectFilePath": "D:\\Blockchain\\Vaccine Cold Chain\\source\\vaccine-chain-bk\\vaccine-chain-bk\\vaccine-chain-bk.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Acer\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
+    "C:\\Users\\Acer\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\automapper.extensions.enummapping\\3.2.0\\automapper.extensions.enummapping.3.2.0.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
@@ -75,7 +75,7 @@
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.codeanalysis.razor\\6.0.11\\microsoft.codeanalysis.razor.6.0.11.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.codeanalysis.scripting.common\\4.4.0\\microsoft.codeanalysis.scripting.common.4.4.0.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.codeanalysis.workspaces.common\\4.4.0\\microsoft.codeanalysis.workspaces.common.4.4.0.nupkg.sha512",
-    "C:\\Users\\Acer\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\Acer\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.data.sqlclient\\5.1.5\\microsoft.data.sqlclient.5.1.5.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\5.1.1\\microsoft.data.sqlclient.sni.runtime.5.1.1.nupkg.sha512",
     "C:\\Users\\Acer\\.nuget\\packages\\microsoft.diasymreader\\1.4.0\\microsoft.diasymreader.1.4.0.nupkg.sha512",

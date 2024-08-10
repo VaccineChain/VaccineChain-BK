@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using vaccine_chain_bk.Constraints;
 
 namespace vaccine_chain_bk.Models
 {
@@ -25,10 +26,10 @@ namespace vaccine_chain_bk.Models
 
         public string Address { get; set; }
 
+        public EAccount Status { get; set; }
+
         public string? ProfilePicture { get; set; }
         public Guid RoleId { get; set; }
-
-
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
 

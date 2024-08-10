@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v7.0": {
       "vaccine-chain-bk/1.0.0": {
         "dependencies": {
+          "AutoMapper": "13.0.1",
           "AutoMapper.Extensions.EnumMapping": "3.2.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.20",
           "Microsoft.AspNetCore.OpenApi": "7.0.18",
@@ -24,20 +25,20 @@
           "vaccine-chain-bk.dll": {}
         }
       },
-      "AutoMapper/12.0.0": {
+      "AutoMapper/13.0.1": {
         "dependencies": {
-          "Microsoft.CSharp": "4.7.0"
+          "Microsoft.Extensions.Options": "7.0.0"
         },
         "runtime": {
-          "lib/netstandard2.1/AutoMapper.dll": {
-            "assemblyVersion": "12.0.0.0",
-            "fileVersion": "12.0.0.0"
+          "lib/net6.0/AutoMapper.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.0"
           }
         }
       },
       "AutoMapper.Extensions.EnumMapping/3.2.0": {
         "dependencies": {
-          "AutoMapper": "12.0.0"
+          "AutoMapper": "13.0.1"
         },
         "runtime": {
           "lib/net6.0/AutoMapper.Extensions.EnumMapping.dll": {
@@ -1112,7 +1113,7 @@
           }
         }
       },
-      "Microsoft.CSharp/4.7.0": {},
+      "Microsoft.CSharp/4.5.0": {},
       "Microsoft.Data.SqlClient/5.1.5": {
         "dependencies": {
           "Azure.Identity": "1.10.3",
@@ -1403,7 +1404,7 @@
       },
       "Microsoft.IdentityModel.Tokens/6.35.0": {
         "dependencies": {
-          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.CSharp": "4.5.0",
           "Microsoft.IdentityModel.Logging": "6.35.0",
           "System.Security.Cryptography.Cng": "5.0.0"
         },
@@ -2609,12 +2610,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "AutoMapper/12.0.0": {
+    "AutoMapper/13.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0Rmg0zI5AFu1O/y//o9VGyhxKjhggWpk9mOA1tp0DEVx40c61bs+lnQv+0jUq8XbniF7FKgIVvI1perqiMtLrA==",
-      "path": "automapper/12.0.0",
-      "hashPath": "automapper.12.0.0.nupkg.sha512"
+      "sha512": "sha512-/Fx1SbJ16qS7dU4i604Sle+U9VLX+WSNVJggk6MupKVkYvvBm4XqYaeFuf67diHefHKHs50uQIS2YEDFhPCakQ==",
+      "path": "automapper/13.0.1",
+      "hashPath": "automapper.13.0.1.nupkg.sha512"
     },
     "AutoMapper.Extensions.EnumMapping/3.2.0": {
       "type": "package",
@@ -3106,12 +3107,12 @@
       "path": "microsoft.codeanalysis.workspaces.common/4.4.0",
       "hashPath": "microsoft.codeanalysis.workspaces.common.4.4.0.nupkg.sha512"
     },
-    "Microsoft.CSharp/4.7.0": {
+    "Microsoft.CSharp/4.5.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
-      "path": "microsoft.csharp/4.7.0",
-      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
+      "sha512": "sha512-kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
+      "path": "microsoft.csharp/4.5.0",
+      "hashPath": "microsoft.csharp.4.5.0.nupkg.sha512"
     },
     "Microsoft.Data.SqlClient/5.1.5": {
       "type": "package",

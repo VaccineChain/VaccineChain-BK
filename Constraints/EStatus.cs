@@ -1,12 +1,7 @@
 ﻿namespace vaccine_chain_bk.Constraints
 {
-    public enum EStatus
+    public enum EType
     {
-        Normal,
-        Cold,
-        Hot,
-        Warning,
-        Critical,
-        OutOfRange
+        Temperature,
     }
 }

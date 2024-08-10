@@ -27,9 +27,14 @@ namespace vaccine_chain_bk.Models
 
         public ApplicationDbContext()
         {
+
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Vaccine> Vaccines { get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<Dose> Doses { get; set; }
+        public DbSet<Log> Logs { get; set; }
     }
 }

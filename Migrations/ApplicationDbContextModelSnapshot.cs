@@ -22,6 +22,91 @@ namespace vaccine_chain_bk.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("vaccine_chain_bk.Models.Device", b =>
+                {
+                    b.Property<string>("DeviceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SensorType")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeviceId");
+
+                    b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Dose", b =>
+                {
+                    b.Property<int>("DoseNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DoseNumber"));
+
+                    b.Property<string>("Administrator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateAdministered")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LocationAdministered")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VaccineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("DoseNumber");
+
+                    b.HasIndex("VaccineId");
+
+                    b.ToTable("Doses");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Log", b =>
+                {
+                    b.Property<int?>("TemperatureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("TemperatureId"));
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VaccineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("TemperatureId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("VaccineId");
+
+                    b.ToTable("Logs");
+                });
+
             modelBuilder.Entity("vaccine_chain_bk.Models.Role", b =>
                 {
                     b.Property<Guid>("RoleId")
@@ -75,11 +160,70 @@ namespace vaccine_chain_bk.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("UserId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Vaccine", b =>
+                {
+                    b.Property<string>("VaccineId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BatchNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Manufacturer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VaccineName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VaccineId");
+
+                    b.ToTable("Vaccines");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Dose", b =>
+                {
+                    b.HasOne("vaccine_chain_bk.Models.Vaccine", "Vaccine")
+                        .WithMany("Doses")
+                        .HasForeignKey("VaccineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vaccine");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Log", b =>
+                {
+                    b.HasOne("vaccine_chain_bk.Models.Device", "Device")
+                        .WithMany("Logs")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("vaccine_chain_bk.Models.Vaccine", "Vaccine")
+                        .WithMany("Logs")
+                        .HasForeignKey("VaccineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Vaccine");
                 });
 
             modelBuilder.Entity("vaccine_chain_bk.Models.User", b =>
@@ -93,9 +237,21 @@ namespace vaccine_chain_bk.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("vaccine_chain_bk.Models.Device", b =>
+                {
+                    b.Navigation("Logs");
+                });
+
             modelBuilder.Entity("vaccine_chain_bk.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("vaccine_chain_bk.Models.Vaccine", b =>
+                {
+                    b.Navigation("Doses");
+
+                    b.Navigation("Logs");
                 });
 #pragma warning restore 612, 618
         }
