@@ -2,6 +2,7 @@
 using vaccine_chain_bk.DTO;
 using vaccine_chain_bk.DTO.Device;
 using vaccine_chain_bk.DTO.Log;
+using vaccine_chain_bk.DTO.Vaccine;
 using vaccine_chain_bk.Exceptions;
 using vaccine_chain_bk.Models;
 using vaccine_chain_bk.Services.Devices;
@@ -38,7 +39,7 @@ namespace vaccine_chain_bk.Controllers
             return Ok(allLogs);
         }
 
-
+        
         [HttpGet("GetExistConnection")]
         public IActionResult GetExistConnection([FromQuery] string deviceId, [FromQuery] string vaccineId)
         {

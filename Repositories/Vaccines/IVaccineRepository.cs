@@ -9,8 +9,12 @@ namespace vaccine_chain_bk.Repositories.Vaccines
 
         void SaveVaccine(Vaccine vaccine);
 
-        Vaccine GetVaccine(string id);
+        Vaccine GetVaccineById(string id);
+
+        List<Vaccine> GetVaccineByName(string name);
+
         void DeleteVaccine(Vaccine vaccine);
+
         void UpdateVaccine(Vaccine vaccine);
     }
 }

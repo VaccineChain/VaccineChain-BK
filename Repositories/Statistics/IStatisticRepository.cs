@@ -5,7 +5,7 @@ namespace vaccine_chain_bk.Repositories.Statistics
 {
     public interface IStatisticRepository
     {
-        StatisticLogsByVaccineId GetStatisticsByVaccineId(string vaccineId);
+        StatisticLogsByVaccineId GetStatisticsByVaccineId(List<Log> logs, Vaccine vaccine);
         List<StatisticAreaChart> GetStatisticsForAreaChart(string vaccineId);
     }
 }

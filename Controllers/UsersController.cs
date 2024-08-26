@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
+using vaccine_chain_bk.DTO.User;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +10,9 @@ namespace vaccine_chain_bk.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        // Đây là một ví dụ đơn giản, bạn nên sử dụng một cơ sở dữ liệu hoặc dịch vụ xác thực thực tế
+        private static readonly string AdminEmail = "admin";
+        private static readonly string AdminPassword = "admin@123";
         // GET: api/<User>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -16,10 +21,14 @@ namespace vaccine_chain_bk.Controllers
         }
 
         // GET api/<User>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest loginRequest)
         {
-            return "value";
+            if (loginRequest.Email == AdminEmail && loginRequest.Password == AdminPassword)
+            {
+                return Ok(new { message = "Login successful" });
+            }
+            return Unauthorized(new { message = "Invalid credentials" });
         }
 
         // POST api/<User>

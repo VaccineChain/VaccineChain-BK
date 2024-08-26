@@ -1,12 +1,11 @@
-﻿using vaccine_chain_bk.DTO.Device;
-using vaccine_chain_bk.DTO.Log;
+﻿
 using vaccine_chain_bk.DTO.Vaccine;
 
 namespace vaccine_chain_bk.DTO.Statistic
 {
     public class StatisticLogsByVaccineId
     {
-        public string VaccineId { get; set; }
+        public VaccineDto Vaccine { get; set; }
         public List<string> DeviceId { get; set; } = new List<string>();
         public double AverageValue { get; set; }
         public double HighestValue { get; set; }

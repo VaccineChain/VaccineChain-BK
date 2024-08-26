@@ -16,6 +16,7 @@ namespace vaccine_chain_bk.Models
         public string BatchNumber { get; set; }
 
         public DateTime ExpirationDate { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public virtual ICollection<Log>? Logs { get; set; }
 

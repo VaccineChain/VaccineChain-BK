@@ -38,7 +38,7 @@ namespace vaccine_chain_bk.Repositories.Vaccines
             }
         }
 
-        public Vaccine GetVaccine(string id)
+        public Vaccine GetVaccineById(string id)
         {
             try
             {
@@ -49,6 +49,21 @@ namespace vaccine_chain_bk.Repositories.Vaccines
                 throw new Exception("Error getting Vaccine");
             }
         }
+
+        public List<Vaccine> GetVaccineByName(string name)
+        {
+            try
+            {
+                return _context.Vaccines
+                               .Where(v => v.VaccineName.Contains(name))
+                               .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error searching Vaccines", ex);
+            }
+        }
+        
 
         public void SaveVaccine(Vaccine v)
         {

@@ -1,7 +1,9 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using vaccine_chain_bk.DTO;
+using vaccine_chain_bk.DTO.Log;
 using vaccine_chain_bk.DTO.Vaccine;
+using vaccine_chain_bk.Exceptions;
 using vaccine_chain_bk.Models;
 using vaccine_chain_bk.Repositories.Vaccines;
 using vaccine_chain_bk.Services.Vaccines;
@@ -29,12 +31,40 @@ namespace vaccine_chain_bk.Controllers
             return Ok(vaccines);
         }
 
-        // GET api/<VaccinesController>/5
-        [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        [HttpGet("GetById")]
+        public IActionResult GetVaccineById(string vaccineId)
         {
-            VaccineDto vaccineDto = _vaccineService.GetById(id);
-            return Ok(vaccineDto);
+            try
+            {
+                VaccineDto vaccineDto = _vaccineService.GetById(vaccineId);
+                return Ok(vaccineDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("GetByName")]
+        public IActionResult GetVaccineByName(string vaccineName)
+        {
+            try
+            {
+                List<VaccineDto> vaccineDto = _vaccineService.GetByName(vaccineName);
+                return Ok(vaccineDto);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         // POST api/<VaccinesController>

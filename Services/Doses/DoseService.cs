@@ -23,7 +23,7 @@ namespace vaccine_chain_bk.Services.Doses
         public DoseDto CreateDose(CreateDoseDto createDoseDto)
         {
 
-            Vaccine getVaccine = _vaccineRepository.GetVaccine(createDoseDto.VaccineId) ?? throw new NotFoundException("VaccineId is not exist!");
+            Vaccine getVaccine = _vaccineRepository.GetVaccineById(createDoseDto.VaccineId) ?? throw new NotFoundException("VaccineId is not exist!");
             Dose dose = _mapper.Map<Dose>(createDoseDto);
             _doseRepository.SaveDose(dose);
 

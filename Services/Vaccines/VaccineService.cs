@@ -26,7 +26,7 @@ namespace vaccine_chain_bk.Services.Vaccines
 
         public string DeleteVaccine(string id)
         {
-            Vaccine getVaccine = _vaccineRepository.GetVaccine(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
+            Vaccine getVaccine = _vaccineRepository.GetVaccineById(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
             _vaccineRepository.DeleteVaccine(getVaccine);
 
             return "Delete successful";
@@ -40,14 +40,22 @@ namespace vaccine_chain_bk.Services.Vaccines
 
         public VaccineDto GetById(string id)
         {
-            Vaccine getVaccine = _vaccineRepository.GetVaccine(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
+            Console.WriteLine(id);
+            Vaccine getVaccine = _vaccineRepository.GetVaccineById(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
             return _mapper.Map<VaccineDto>(getVaccine);
+
+        }
+
+        public List<VaccineDto> GetByName(string name)
+        {
+            List<Vaccine> getVaccine = _vaccineRepository.GetVaccineByName(name) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
+            return _mapper.Map<List<VaccineDto>>(getVaccine);
 
         }
 
         public VaccineDto UpdateVaccine(string id, UpdateVaccineDto updateVaccineDto)
         {
-            _ = _vaccineRepository.GetVaccine(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
+            _ = _vaccineRepository.GetVaccineById(id) ?? throw new DirectoryNotFoundException("Vaccine does not exists");
 
             Vaccine aMToUpdate = _mapper.Map<Vaccine>(updateVaccineDto);
             aMToUpdate.VaccineId = id;

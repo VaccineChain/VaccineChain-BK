@@ -8,6 +8,8 @@ namespace vaccine_chain_bk.Services.Vaccines
 
         VaccineDto GetById(string id);
 
+        List<VaccineDto> GetByName(string name);
+
         VaccineDto CreateVaccine(CreateVaccineDto createVaccineDto);
 
         VaccineDto UpdateVaccine(string id, UpdateVaccineDto updateVaccineDto);
