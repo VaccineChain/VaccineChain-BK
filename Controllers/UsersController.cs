@@ -1,52 +1,79 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Plugins;
+using vaccine_chain_bk.DTO;
 using vaccine_chain_bk.DTO.User;
+using vaccine_chain_bk.Exceptions;
+using vaccine_chain_bk.Services.Users;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace vaccine_chain_bk.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        // Đây là một ví dụ đơn giản, bạn nên sử dụng một cơ sở dữ liệu hoặc dịch vụ xác thực thực tế
-        private static readonly string AdminEmail = "admin";
-        private static readonly string AdminPassword = "admin@123";
-        // GET: api/<User>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IUserService _userService;
+
+        public UsersController(IUserService userService)
         {
-            return new string[] { "value1", "value2" };
+            _userService = userService;
         }
 
-        // GET api/<User>/5
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            if (loginRequest.Email == AdminEmail && loginRequest.Password == AdminPassword)
+            if (!ModelState.IsValid)
             {
-                return Ok(new { message = "Login successful" });
+                return BadRequest(ModelState);
             }
-            return Unauthorized(new { message = "Invalid credentials" });
+
+            ResponseDto response = new();
+            try
+            {
+                response.Message = _userService.Register(registerDto);
+                return Ok(response);
+            }
+            catch (ConflictException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status409Conflict, response);
+            }
+            catch (InvalidException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+            catch (Exception e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
         }
 
-        // POST api/<User>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        // PUT api/<User>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<User>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            ResponseDto response = new();
+            try
+            {
+                AuthResponse authResponse = await _userService.Login(loginDto);
+                return Ok(authResponse);
+            }
+            catch (AuthenticationException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status401Unauthorized, response);
+            }
+            catch (Exception e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
         }
     }
 }

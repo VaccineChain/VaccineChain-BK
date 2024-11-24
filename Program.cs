@@ -5,7 +5,9 @@ using vaccine_chain_bk.Models;
 using vaccine_chain_bk.Repositories.Devices;
 using vaccine_chain_bk.Repositories.Does;
 using vaccine_chain_bk.Repositories.Logs;
+using vaccine_chain_bk.Repositories.Roles;
 using vaccine_chain_bk.Repositories.Statistics;
+using vaccine_chain_bk.Repositories.Users;
 using vaccine_chain_bk.Repositories.Vaccines;
 using vaccine_chain_bk.Services;
 using vaccine_chain_bk.Services.Devices;
@@ -13,6 +15,7 @@ using vaccine_chain_bk.Services.Dht11;
 using vaccine_chain_bk.Services.Doses;
 using vaccine_chain_bk.Services.Logs;
 using vaccine_chain_bk.Services.Statistics;
+using vaccine_chain_bk.Services.Users;
 using vaccine_chain_bk.Services.Vaccines;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +48,7 @@ builder.Services.AddScoped<IDoseService, DoseService>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IDht11Service, Dht11Service>();
 builder.Services.AddScoped<IStatisticService, StatisticService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add repositories to the container.
 builder.Services.AddScoped<IVaccineRepository, VaccineRepository>();
@@ -53,6 +56,8 @@ builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<IDoseRepository, DoseRepository>();
 builder.Services.AddScoped<ILogRepository, LogRepository>();
 builder.Services.AddScoped<IStatisticRepository, StatisticRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 // 
 builder.Services.AddHttpClient<HttpClientService>();

@@ -21,7 +21,7 @@
         "DB_USER": "sa",
         "DB_PASSWORD": "vaccinechain@123",
         "DB_NAME": "vaccine-chain",
-        "NODE_VACCINE_URL": "https://bbff-113-161-210-40.ngrok-free.app"
+        "NODE_VACCINE_URL": "https://0615-113-161-210-40.ngrok-free.app"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7241;http://localhost:5208"

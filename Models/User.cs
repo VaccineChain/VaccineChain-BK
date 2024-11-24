@@ -29,9 +29,9 @@ namespace vaccine_chain_bk.Models
         public EAccount Status { get; set; }
 
         public string? ProfilePicture { get; set; }
+
         public Guid RoleId { get; set; }
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
-
     }
 }
