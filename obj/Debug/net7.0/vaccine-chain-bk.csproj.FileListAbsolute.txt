@@ -256,3 +256,4 @@ D:\Blockchain\Vaccine Cold Chain\source\vaccine-chain-bk\vaccine-chain-bk\obj\De
 D:\Blockchain\Vaccine Cold Chain\source\vaccine-chain-bk\vaccine-chain-bk\obj\Debug\net7.0\vaccine-chain-bk.genruntimeconfig.cache
 D:\Blockchain\Vaccine Cold Chain\source\vaccine-chain-bk\vaccine-chain-bk\obj\Debug\net7.0\ref\vaccine-chain-bk.dll
 D:\Blockchain\Vaccine Cold Chain\source\vaccine-chain-bk\vaccine-chain-bk\obj\Debug\net7.0\vaccine-chain-bk.csproj.CopyComplete
+D:\Blockchain\Vaccine Cold Chain\source\vaccine-chain-bk\vaccine-chain-bk\bin\Debug\net7.0\System.Net.WebSockets.WebSocketProtocol.dll

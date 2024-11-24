@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace vaccine_chain_bk.Models
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext   
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

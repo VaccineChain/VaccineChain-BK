@@ -1,10 +1,13 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using vaccine_chain_bk.Hubs;
 using vaccine_chain_bk.Models;
 using vaccine_chain_bk.Repositories.Devices;
 using vaccine_chain_bk.Repositories.Does;
 using vaccine_chain_bk.Repositories.Logs;
 using vaccine_chain_bk.Repositories.Statistics;
 using vaccine_chain_bk.Repositories.Vaccines;
+using vaccine_chain_bk.Services;
 using vaccine_chain_bk.Services.Devices;
 using vaccine_chain_bk.Services.Dht11;
 using vaccine_chain_bk.Services.Doses;
@@ -51,9 +54,54 @@ builder.Services.AddScoped<IDoseRepository, DoseRepository>();
 builder.Services.AddScoped<ILogRepository, LogRepository>();
 builder.Services.AddScoped<IStatisticRepository, StatisticRepository>();
 
+// 
+builder.Services.AddHttpClient<HttpClientService>();
+
 
 // Add services to the container.
 builder.Services.AddCors();
+
+// Thêm chính sách CORS với các nguồn được chỉ định
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        builder => builder
+            .WithOrigins("http://localhost:4200") // Chỉ định nguồn cụ thể (Angular app)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()); // Cho phép gửi cookie/credentials nếu cần
+});
+
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Vaccine API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+
+// Thêm SignalR
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -74,9 +122,21 @@ app.UseCors(builder =>
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseRouting();
+
+
+// Sử dụng CORS
+app.UseCors("AllowSpecificOrigins");
+
+// Map SignalR Hub
+app.MapHub<TemperatureHub>("/temperatureHub");
+
 
 using (var scope = app.Services.CreateScope())
 {

@@ -16,15 +16,13 @@ namespace vaccine_chain_bk.Services.Statistics
 {
     public class StatisticService : IStatisticService
     {
-        private readonly IMapper _mapper;
         private readonly IStatisticRepository _statisticRepository;
         private readonly IVaccineRepository _vaccineRepository;
         private readonly ILogRepository _logRepository;
 
 
-        public StatisticService(IMapper mapper, IStatisticRepository statisticRepository, IVaccineRepository vaccineRepository, ILogRepository logRepository)
+        public StatisticService(IStatisticRepository statisticRepository, IVaccineRepository vaccineRepository, ILogRepository logRepository)
         {
-            _mapper = mapper;
             _statisticRepository = statisticRepository;
             _vaccineRepository = vaccineRepository;
             _logRepository = logRepository;

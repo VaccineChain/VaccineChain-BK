@@ -13,12 +13,10 @@ namespace vaccine_chain_bk.Services.Dht11
     public class Dht11Service : IDht11Service
     {
         private readonly ILogService _logService;
-        private readonly IVaccineService _vaccineService;
 
-        public Dht11Service(ILogService logService, IVaccineService vaccineService)
+        public Dht11Service(ILogService logService)
         {
             _logService = logService;
-            _vaccineService = vaccineService;
         }
 
         public void ProcessData(Dht11Dto dht11)

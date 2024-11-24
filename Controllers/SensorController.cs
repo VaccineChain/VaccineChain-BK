@@ -7,114 +7,88 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using vaccine_chain_bk.DTO.HyperledgerResponse;
+using vaccine_chain_bk.DTO.Request;
+using vaccine_chain_bk.Services;
 
 [Route("api/[controller]")]
 [ApiController]
 public class SensorController : ControllerBase
 {
-    private readonly HttpClient _httpClient;
-    public string ngrokUrl = "https://ee2a-171-247-209-97.ngrok-free.app"; /* change url ngrok in chaincode here*/
+    private readonly HttpClientService _httpClientService;
 
-
-    public SensorController()
+    public SensorController(HttpClientService httpClientService)
     {
-        _httpClient = new HttpClient();
+        _httpClientService = httpClientService;
     }
 
-    [HttpGet("query")]
-    public async Task<IActionResult> QueryChaincode([FromQuery] SensorReading queryData)
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
     {
         try
         {
-            User registerUser = new(queryData.args.Last(), "Org1");
-            var token = await EnrollUser(registerUser);
-
-            if (string.IsNullOrEmpty(token))
-            {
-                return StatusCode(500, "Failed to enroll user and obtain token.");
-            }
-
-            // Set up the Bearer token
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var url = ngrokUrl + $"/channels/{queryData.channelName}/chaincodes/{queryData.chaincodeName}" +
-                      $"?args=[\"{queryData.args.First()}\"]&peer={queryData.peers.First()}&fcn={queryData.fcn}";
-
-            Console.WriteLine("Request URL: " + url);
-            Console.WriteLine("Authorization Token: " + token);
-
-            // Send the GET request
-            var response = await _httpClient.GetAsync(url);
-
-            Console.WriteLine("Response Status Code: " + response.StatusCode);
-            Console.WriteLine("Response Reason Phrase: " + response.ReasonPhrase);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<GetResults>(responseData);
-                return Ok(result);
-            }
-
-            return StatusCode((int)response.StatusCode, "Failed to query chaincode.");
+            var result = await _httpClientService.RegisterUserAsync(request);
+            return Ok(new { Message = result.Message, Token = result.Token });
         }
-        catch (HttpRequestException e)
+        catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {e.Message}");
+            return StatusCode(500, new { Message = "Registration failed.", Error = ex.Message });
         }
     }
 
-
-    [HttpPost("send")]
-    public async Task<IActionResult> SendSensorReading([FromBody] SensorReading sensorReading)
+    [HttpPost("add")]
+    public async Task<IActionResult> AddVaccineData([FromBody] SensorReading request)
     {
-        // Serialize the sensorReading object to JSON
-        var json = JsonConvert.SerializeObject(sensorReading);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var authorizationHeader = Request.Headers.Authorization.ToString();
 
-        User registerUser = new User(sensorReading.args.Last(), "Org1");
-        var token = await EnrollUser(registerUser);
-
-        if (token == null)
+        if (string.IsNullOrEmpty(authorizationHeader))
         {
-            return StatusCode(500, "Failed to enroll user.");
+            return Unauthorized(new { message = "Authorization header is missing." });
         }
 
-        // Set up the Bearer token
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        // Extract the Bearer token
+        var token = authorizationHeader.StartsWith("Bearer ")
+                    ? authorizationHeader.Substring("Bearer ".Length).Trim()
+                    : null;
 
-        // Send the POST request
-        var response = await _httpClient.PostAsync($"{ngrokUrl}/channels/mychannel/chaincodes/fabcar", content);
-
-        // Handle the response
-        if (response.IsSuccessStatusCode)
+        if (string.IsNullOrEmpty(token))
         {
-            var responseData = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<SmartContractResponse>(responseData);
-            return Ok(result);
+            return Unauthorized(new { message = "Bearer token is missing." });
         }
 
-        return StatusCode((int)response.StatusCode, "Failed to send sensor reading.");
+        var result = await _httpClientService.AddVaccineDataAsync(request, token);
+
+        return Ok(new { Message = "Vaccine data added successfully.", Result = result });
     }
 
-    private async Task<string> EnrollUser(User user)
+    [HttpGet("get/{vaccineId}")]
+    public async Task<IActionResult> GetVaccineById(string vaccineId)
     {
-        // Serialize the user object to JSON
-        var json = JsonConvert.SerializeObject(user);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var authorizationHeader = Request.Headers.Authorization.ToString();
 
-        // Send the POST request
-        var response = await _httpClient.PostAsync($"{ngrokUrl}/users", content);
-
-        // Handle the response
-        if (response.IsSuccessStatusCode)
+        if (string.IsNullOrEmpty(authorizationHeader))
         {
-            var responseData = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RegisterUserResponse>(responseData);
-            Console.WriteLine($"Token: {result.token}");
-            return result.token;
+            return Unauthorized(new { message = "Authorization header is missing." });
         }
 
-        return null;
+        // Extract Bearer token
+        var token = authorizationHeader.StartsWith("Bearer ")
+                    ? authorizationHeader.Substring("Bearer ".Length).Trim()
+                    : null;
+
+        if (string.IsNullOrEmpty(token))
+        {
+            return Unauthorized(new { message = "Bearer token is missing." });
+        }
+
+        try
+        {
+            var result = await _httpClientService.GetVaccineByIdAsync(vaccineId, token);
+            return Ok(new { Message = "Vaccine data retrieved successfully.", Data = result });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+        }
     }
+
 }

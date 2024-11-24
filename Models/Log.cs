@@ -8,7 +8,7 @@ namespace vaccine_chain_bk.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? TemperatureId { get; set; }
+        public int LogId { get; set; }
 
         public double? Value { get; set; }
 
@@ -27,11 +27,6 @@ namespace vaccine_chain_bk.Models
 
         [ForeignKey("DeviceId")]
         public virtual Device Device { get; set; }
-
-        public static implicit operator List<object>(Log v)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
