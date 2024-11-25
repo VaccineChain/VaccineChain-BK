@@ -94,9 +94,12 @@ namespace vaccine_chain_bk.Services.Users
             var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseBody, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            }) ?? throw new AuthenticationException("Invalid Credentials!");
 
-            return authResponse ?? throw new AuthenticationException("Invalid Credentials!");
+            UserDto userDto = _mapper.Map<UserDto>(user);
+            authResponse.User = userDto;
+
+            return authResponse;
         }
     }
 }

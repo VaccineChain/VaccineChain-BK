@@ -22,9 +22,9 @@ namespace vaccine_chain_bk.Models
         [StringLength(50)]
         public string LastName { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         public EAccount Status { get; set; }
 

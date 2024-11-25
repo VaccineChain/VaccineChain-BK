@@ -18,12 +18,6 @@ namespace vaccine_chain_bk.DTO.User
         [Required]
         public string LastName { get; set; }
 
-        [Required]
-        public string DateOfBirth { get; set; }
-
-        [Required]
-        public string Address { get; set; }
-
         public EAccount Status { get; set; } = EAccount.Active;
     }
 }
