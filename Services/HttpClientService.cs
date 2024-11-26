@@ -18,34 +18,51 @@ namespace vaccine_chain_bk.Services
             _httpClient = httpClient;
         }
 
-        public async Task<UserRegistrationResponse> RegisterUserAsync(UserRegistrationRequest request)
+        public async Task<string> RegisterUserAsync(string username, string orgName)
         {
             var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL");
-            var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
+            // Tạo nội dung JSON cho yêu cầu
+            var userRegistrationRequest = new
+            {
+                username = username,
+                orgName = orgName
+            };
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(userRegistrationRequest), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync($"{url}/users", jsonContent);
+
+            // Đảm bảo phản hồi thành công
             response.EnsureSuccessStatusCode();
 
+            // Deserialize phản hồi để lấy token
             var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response from /users: {responseBody}");
 
-            // Deserialize phản hồi từ API
-            var registrationResponse = JsonSerializer.Deserialize<UserRegistrationResponse>(responseBody, new JsonSerializerOptions
+            var responseObject = JsonSerializer.Deserialize<RegisterUserResponse>(responseBody, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-            if (registrationResponse == null || !registrationResponse.Success)
+            if (responseObject == null || string.IsNullOrEmpty(responseObject.Token))
             {
-                throw new Exception($"User registration failed: {registrationResponse?.Message ?? "Unknown error"}");
+                throw new Exception("Failed to register user or retrieve token.");
             }
 
-            // Lưu token để sử dụng cho các yêu cầu sau
-            return registrationResponse;
+            return responseObject.Token;
         }
 
-        public async Task<string> AddVaccineDataAsync(SensorReading request, string token)
+
+        public async Task<string> AddVaccineDataAsync(SensorReading request)
         {
             var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL");
+
+            string token = await RegisterUserAsync("authenToAdd", "Org1");
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new Exception("Authentication token is missing or invalid.");
+            }
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");

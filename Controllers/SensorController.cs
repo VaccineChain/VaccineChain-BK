@@ -22,43 +22,75 @@ public class SensorController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
     {
         try
         {
-            var result = await _httpClientService.RegisterUserAsync(request);
-            return Ok(new { Message = result.Message, Token = result.Token });
+            // Gọi phương thức đăng ký user từ HttpClientService
+            string token = await _httpClientService.RegisterUserAsync(request.Username, request.OrgName);
+
+            return Ok(new
+            {
+                Message = $"{request.Username} registered successfully.",
+                Token = token
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { Message = "Registration failed.", Error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred during user registration.", error = ex.Message });
         }
     }
+
 
     [HttpPost("add")]
     public async Task<IActionResult> AddVaccineData([FromBody] SensorReading request)
     {
+        string token;
+
+        // Kiểm tra Authorization Header
         var authorizationHeader = Request.Headers.Authorization.ToString();
 
-        if (string.IsNullOrEmpty(authorizationHeader))
+        if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
         {
-            return Unauthorized(new { message = "Authorization header is missing." });
+            // Nếu Authorization Header không tồn tại hoặc không hợp lệ, tự động đăng ký user
+            try
+            {
+                var defaultUsername = "defaultUser"; // Username mặc định
+                var defaultOrgName = "Org1";        // OrgName mặc định
+
+                token = await _httpClientService.RegisterUserAsync(defaultUsername, defaultOrgName);
+
+                Console.WriteLine($"User '{defaultUsername}' registered successfully. Token: {token}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to register user.", error = ex.Message });
+            }
+        }
+        else
+        {
+            // Trích xuất token từ Authorization Header
+            token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { message = "Bearer token is missing." });
+            }
         }
 
-        // Extract the Bearer token
-        var token = authorizationHeader.StartsWith("Bearer ")
-                    ? authorizationHeader.Substring("Bearer ".Length).Trim()
-                    : null;
-
-        if (string.IsNullOrEmpty(token))
+        // Gọi phương thức để thêm dữ liệu vaccine
+        try
         {
-            return Unauthorized(new { message = "Bearer token is missing." });
+            var result = await _httpClientService.AddVaccineDataAsync(request);
+
+            return Ok(new { Message = "Vaccine data added successfully.", Result = result });
         }
-
-        var result = await _httpClientService.AddVaccineDataAsync(request, token);
-
-        return Ok(new { Message = "Vaccine data added successfully.", Result = result });
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while adding vaccine data.", error = ex.Message });
+        }
     }
+
 
     [HttpGet("get/{vaccineId}")]
     public async Task<IActionResult> GetVaccineById(string vaccineId)
