@@ -1,4 +1,5 @@
 ﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using vaccine_chain_bk.DTO;
 using vaccine_chain_bk.DTO.Log;

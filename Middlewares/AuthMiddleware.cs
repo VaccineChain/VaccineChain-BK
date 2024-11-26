@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 
@@ -15,6 +16,14 @@ namespace vaccine_chain_bk.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
+            // Check if the route has AllowAnonymous attribute
+            var endpoint = context.GetEndpoint();
+            if (endpoint != null && endpoint.Metadata.GetMetadata<AllowAnonymousAttribute>() != null)
+            {
+                await _next(context);  // Skip authentication for allowed endpoints
+                return;
+            }
+
             // Get the Authorization header
             var authorizationHeader = context.Request.Headers["Authorization"].ToString();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using vaccine_chain_bk.DTO;
 using vaccine_chain_bk.DTO.User;
 using vaccine_chain_bk.Exceptions;
@@ -19,6 +20,7 @@ namespace vaccine_chain_bk.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
@@ -50,6 +52,7 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -79,10 +82,10 @@ namespace vaccine_chain_bk.Controllers
         [HttpPut("change-password")]
         public IActionResult ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            var email = HttpContext.Items.ContainsKey("Email")
-                        ? HttpContext.Items["Email"]
-                        : throw new AuthenticationException("Unauthorized");  // Provide a default message
-
+            //var email = HttpContext.Items.ContainsKey("Email")
+            //            ? HttpContext.Items["Email"]
+            //            : throw new AuthenticationException("Unauthorized");  // Provide a default message
+            string email = "quang@gmail.com";
             ResponseDto response = new();
             try
             {

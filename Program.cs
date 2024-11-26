@@ -148,8 +148,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseRouting();
-
 
 // Sử dụng CORS
 app.UseCors("AllowSpecificOrigins");
