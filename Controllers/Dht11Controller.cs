@@ -34,7 +34,6 @@ namespace vaccine_chain_bk.Controllers
             Console.WriteLine($"Received Temperature: {data.value}");
 
 
-
             // Process the data using the service (if necessary)
             _dht11Service.ProcessData(data);
 
@@ -45,23 +44,6 @@ namespace vaccine_chain_bk.Controllers
                 temperature = data.value
             });
         }
-
-        /*[HttpPost]
-        public async Task<IActionResult> Post([FromBody] Dht11Dto data)
-        {
-            if (data == null)
-            {
-                return BadRequest("Invalid data.");
-            }
-
-            Console.WriteLine(data.vaccineId);
-            Console.WriteLine(data.deviceId);
-            Console.WriteLine(data.value);
-
-            // Phát dữ liệu thời gian thực qua SignalR
-            await _hubContext.Clients.All.SendAsync("ReceiveTemperatureData", data);
-            return Ok(new { Message = "Data broadcasted in real-time." });
-        }*/
 
     }
 

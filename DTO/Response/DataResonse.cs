@@ -13,6 +13,9 @@ namespace vaccine_chain_bk.DTO.Sensor
         [JsonPropertyName("value")]
         [JsonConverter(typeof(StringToDoubleConverter))]
         public double Value { get; set; }
+
+        [JsonPropertyName("created_date")]
+        public string CreatedDate { get; set; }
     }
 
 }

@@ -23,30 +23,44 @@ public class SensorController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
     {
         try
         {
-            var result = await _httpClientService.RegisterUserAsync(request);
-            return Ok(new { Message = result.Message, Token = result.Token });
+            // Gọi phương thức đăng ký user từ HttpClientService
+            string token = await _httpClientService.RegisterUserAsync(request.Username, request.OrgName);
+
+            return Ok(new
+            {
+                Message = $"{request.Username} registered successfully.",
+                Token = token
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { Message = "Registration failed.", Error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred during user registration.", error = ex.Message });
         }
     }
+
 
     [HttpPost("add")]
     public async Task<IActionResult> AddVaccineData([FromBody] SensorReading request)
     {
-        var token = HttpContext.Items.ContainsKey("Token")
+        try {
+            var token = HttpContext.Items.ContainsKey("Token")
                         ? HttpContext.Items["Token"]
                         : throw new AuthenticationException("Bearer token is missing.");  // Provide a default message
 
-        var result = await _httpClientService.AddVaccineDataAsync(request, token.ToString());
+            var result = await _httpClientService.AddVaccineDataAsync(request);
 
-        return Ok(new { Message = "Vaccine data added successfully.", Result = result });
+            return Ok(new { Message = "Vaccine data added successfully.", Result = result });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while adding vaccine data.", error = ex.Message });
+        }
     }
+
 
     [HttpGet("get/{vaccineId}")]
     public async Task<IActionResult> GetVaccineById(string vaccineId)
