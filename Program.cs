@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using vaccine_chain_bk.Hubs;
+using vaccine_chain_bk.Middlewares;
 using vaccine_chain_bk.Models;
 using vaccine_chain_bk.Repositories.Devices;
 using vaccine_chain_bk.Repositories.Does;
@@ -35,7 +38,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property names
-    }); 
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -65,6 +68,16 @@ builder.Services.AddHttpClient<HttpClientService>();
 
 // Add services to the container.
 builder.Services.AddCors();
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("thisismysecret")), // Replace with your key
+        };
+    });
 
 // Thêm chính sách CORS với các nguồn được chỉ định
 builder.Services.AddCors(options =>
@@ -124,6 +137,8 @@ app.UseCors(builder =>
     .AllowAnyMethod()
     .AllowAnyHeader();
 });
+
+app.UseMiddleware<AuthMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -101,5 +101,36 @@ namespace vaccine_chain_bk.Services.Users
 
             return authResponse;
         }
+
+        public string ChangePassword(string email, ChangePasswordDto changePasswordDto)
+        {
+            User user = _userRepository.GetUserByEmail(email) ?? throw new NotFoundException("User not found");
+
+            if (!VerifyPassword(user.Password, changePasswordDto.CurrentPassword))
+            {
+                throw new InvalidException("Current password is incorrect");
+            }
+
+            user.Password = HashPassword(changePasswordDto.NewPassword);
+            _userRepository.UpdateUser(user);
+
+            return "Password changed successfully";
+        }
+
+        public bool VerifyPassword(string currentPassword, string oldPassword)
+        {
+            var passwordHasher = new PasswordHasher<string>();
+            if (passwordHasher.VerifyHashedPassword(null, currentPassword, oldPassword) == PasswordVerificationResult.Failed)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public string HashPassword(string newPassword)
+        {
+            var passwordHasher = new PasswordHasher<string>();
+            return passwordHasher.HashPassword(null, newPassword);
+        }
     }
 }

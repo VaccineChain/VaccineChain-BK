@@ -39,5 +39,33 @@ namespace vaccine_chain_bk.Repositories.Users
                 throw new Exception("Error getting user");
             }
         }
+
+        public User GetUserById(Guid id)
+        {
+            try
+            {
+                return _context.Users
+                    .Include(u => u.Role)
+                    .AsNoTracking()
+                    .FirstOrDefault(u => u.UserId == id);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error getting user");
+            }
+        }
+
+        public void UpdateUser(User user)
+        {
+            try
+            {
+                _context.Entry<User>(user).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error updating user");
+            }
+        }
     }
 }

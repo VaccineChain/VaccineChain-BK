@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,24 +39,11 @@ public class SensorController : ControllerBase
     [HttpPost("add")]
     public async Task<IActionResult> AddVaccineData([FromBody] SensorReading request)
     {
-        var authorizationHeader = Request.Headers.Authorization.ToString();
+        var token = HttpContext.Items.ContainsKey("Token")
+                        ? HttpContext.Items["Token"]
+                        : throw new AuthenticationException("Bearer token is missing.");  // Provide a default message
 
-        if (string.IsNullOrEmpty(authorizationHeader))
-        {
-            return Unauthorized(new { message = "Authorization header is missing." });
-        }
-
-        // Extract the Bearer token
-        var token = authorizationHeader.StartsWith("Bearer ")
-                    ? authorizationHeader.Substring("Bearer ".Length).Trim()
-                    : null;
-
-        if (string.IsNullOrEmpty(token))
-        {
-            return Unauthorized(new { message = "Bearer token is missing." });
-        }
-
-        var result = await _httpClientService.AddVaccineDataAsync(request, token);
+        var result = await _httpClientService.AddVaccineDataAsync(request, token.ToString());
 
         return Ok(new { Message = "Vaccine data added successfully.", Result = result });
     }
@@ -63,26 +51,13 @@ public class SensorController : ControllerBase
     [HttpGet("get/{vaccineId}")]
     public async Task<IActionResult> GetVaccineById(string vaccineId)
     {
-        var authorizationHeader = Request.Headers.Authorization.ToString();
-
-        if (string.IsNullOrEmpty(authorizationHeader))
-        {
-            return Unauthorized(new { message = "Authorization header is missing." });
-        }
-
-        // Extract Bearer token
-        var token = authorizationHeader.StartsWith("Bearer ")
-                    ? authorizationHeader.Substring("Bearer ".Length).Trim()
-                    : null;
-
-        if (string.IsNullOrEmpty(token))
-        {
-            return Unauthorized(new { message = "Bearer token is missing." });
-        }
+        var token = HttpContext.Items.ContainsKey("Token")
+                        ? HttpContext.Items["Token"]
+                        : throw new AuthenticationException("Bearer token is missing.");  // Provide a default message
 
         try
         {
-            var result = await _httpClientService.GetVaccineByIdAsync(vaccineId, token);
+            var result = await _httpClientService.GetVaccineByIdAsync(vaccineId, token.ToString());
             return Ok(new { Message = "Vaccine data retrieved successfully.", Data = result });
         }
         catch (Exception ex)

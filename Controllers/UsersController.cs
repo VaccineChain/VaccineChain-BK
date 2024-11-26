@@ -75,5 +75,35 @@ namespace vaccine_chain_bk.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+
+        [HttpPut("change-password")]
+        public IActionResult ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var email = HttpContext.Items.ContainsKey("Email")
+                        ? HttpContext.Items["Email"]
+                        : throw new AuthenticationException("Unauthorized");  // Provide a default message
+
+            ResponseDto response = new();
+            try
+            {
+                response.Message = _userService.ChangePassword(email.ToString(), changePasswordDto);
+                return Ok(response);
+            }
+            catch (NotFoundException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status404NotFound, response);
+            }
+            catch (InvalidException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+            catch (Exception e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
     }
 }
