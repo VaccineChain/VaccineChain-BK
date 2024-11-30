@@ -79,13 +79,76 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
+        [HttpGet("profile")]
+        public IActionResult GetProfile()
+        {
+            var email = HttpContext.Items.ContainsKey("Email")
+                        ? HttpContext.Items["Email"]
+                        : throw new AuthenticationException("Unauthorized");  // Provide a default message
+            //string email = "quang@gmail.com";
+
+            ResponseDto response = new();
+            try
+            {
+               UserDto userDto = _userService.GetProfile(email.ToString());
+                return Ok(userDto);
+            }
+            catch (NotFoundException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status404NotFound, response);
+            }
+            catch (InvalidException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+            catch (Exception e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
+        [HttpPut("profile")]
+        public IActionResult UpdateProfile([FromBody] UpdateUserDto updateUserDto)
+        {
+            var email = HttpContext.Items.ContainsKey("Email")
+                        ? HttpContext.Items["Email"]
+                        : throw new AuthenticationException("Unauthorized");  // Provide a default message
+            //string email = "quang@gmail.com";
+
+            ResponseDto response = new();
+            try
+            {
+                UserDto userDto = _userService.UpdateProfile(email.ToString(), updateUserDto);
+                return Ok(userDto);
+            }
+            catch (NotFoundException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status404NotFound, response);
+            }
+            catch (InvalidException e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+            catch (Exception e)
+            {
+                response.Message = e.Message;
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+
         [HttpPut("change-password")]
         public IActionResult ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            //var email = HttpContext.Items.ContainsKey("Email")
-            //            ? HttpContext.Items["Email"]
-            //            : throw new AuthenticationException("Unauthorized");  // Provide a default message
-            string email = "quang@gmail.com";
+            var email = HttpContext.Items.ContainsKey("Email")
+                        ? HttpContext.Items["Email"]
+                        : throw new AuthenticationException("Unauthorized");  // Provide a default message
+            //string email = "quang@gmail.com";
+
             ResponseDto response = new();
             try
             {

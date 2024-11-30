@@ -7,5 +7,7 @@ namespace vaccine_chain_bk.Services.Users
         string Register(RegisterDto registerDto);
         Task<AuthResponse> Login(LoginDto loginDto);
         string ChangePassword(string email, ChangePasswordDto changePasswordDto);
+        UserDto GetProfile(string email);
+        UserDto UpdateProfile(string email, UpdateUserDto updateUserDto);
     }
 }

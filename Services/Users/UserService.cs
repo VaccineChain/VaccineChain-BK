@@ -1,22 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using vaccine_chain_bk.Constraints;
 using vaccine_chain_bk.DTO.User;
 using vaccine_chain_bk.Exceptions;
 using vaccine_chain_bk.Models;
-using vaccine_chain_bk.Repositories.Does;
 using vaccine_chain_bk.Repositories.Users;
 using vaccine_chain_bk.Repositories.Roles;
-using NuGet.Common;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Text.Json;
-using vaccine_chain_bk.DTO.Sensor;
-using Azure.Core;
 
 namespace vaccine_chain_bk.Services.Users
 {
@@ -131,6 +122,27 @@ namespace vaccine_chain_bk.Services.Users
         {
             var passwordHasher = new PasswordHasher<string>();
             return passwordHasher.HashPassword(null, newPassword);
+        }
+
+        public UserDto GetProfile(string email)
+        {
+            User user = _userRepository.GetUserByEmail(email) ?? throw new NotFoundException("User not found");
+            return _mapper.Map<User, UserDto>(user);
+        }
+
+        public UserDto UpdateProfile(string email, UpdateUserDto updateUserDto)
+        {
+            User user = _userRepository.GetUserByEmail(email) ?? throw new NotFoundException("User not found");
+
+            user.FirstName = updateUserDto.FirstName;
+            user.LastName = updateUserDto.LastName;
+            user.Email = updateUserDto.Email;
+            user.DateOfBirth = updateUserDto.DateOfBirth;
+            user.Address = updateUserDto.Address;
+
+            _userRepository.UpdateUser(user);
+
+            return _mapper.Map<User, UserDto>(user);
         }
     }
 }
