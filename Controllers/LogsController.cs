@@ -2,6 +2,7 @@
 using vaccine_chain_bk.DTO;
 using vaccine_chain_bk.DTO.Device;
 using vaccine_chain_bk.DTO.Log;
+using vaccine_chain_bk.DTO.LogValue;
 using vaccine_chain_bk.DTO.Vaccine;
 using vaccine_chain_bk.Exceptions;
 using vaccine_chain_bk.Models;
@@ -39,7 +40,7 @@ namespace vaccine_chain_bk.Controllers
             return Ok(allLogs);
         }
 
-        
+
         [HttpGet("GetExistConnection")]
         public IActionResult GetExistConnection([FromQuery] string deviceId, [FromQuery] string vaccineId)
         {
@@ -82,6 +83,25 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
+        [HttpPut("UpdateStatus")]
+        public IActionResult UpdateStatus([FromBody] UpdateLogStatusDto updateLogStatusDto)
+        {
+            ResponseDto response = new();
+            try
+            {
+                response.Message = _logService.UpdateStatus(updateLogStatusDto.DeviceId, updateLogStatusDto.VaccineId);
+                return Ok(response);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         // DELETE api/<VaccinesController>/5
         [HttpDelete]
         public IActionResult Delete([FromQuery] string deviceId, [FromQuery] string vaccineId)
@@ -90,7 +110,7 @@ namespace vaccine_chain_bk.Controllers
             try
             {
                 response.Message = _logService.DeleteLog(deviceId, vaccineId);
-                return Ok();
+                return Ok(response);
             }
             catch (NotFoundException ex)
             {

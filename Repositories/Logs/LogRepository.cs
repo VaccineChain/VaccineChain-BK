@@ -78,6 +78,7 @@ namespace vaccine_chain_bk.Repositories.Logs
                     .GroupBy(log => new { log.VaccineId, log.DeviceId }) // Nhóm theo vaccineId và deviceId
                     .Select(group => new Log
                     {
+                        Status = group.FirstOrDefault().Status,
                         Vaccine = group.FirstOrDefault().Vaccine,
                         Device = group.FirstOrDefault().Device
                     })
@@ -127,6 +128,20 @@ namespace vaccine_chain_bk.Repositories.Logs
             catch
             {
                 throw new Exception("Error delete Log");
+            }
+        }
+
+        public void UpdateLog(Log log)
+        {
+            try
+            {
+                _context.Entry<Log>(log).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error updating Device");
+
             }
         }
     }

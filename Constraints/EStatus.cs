@@ -2,11 +2,7 @@
 {
     public enum EStatus
     {
-        Normal,
-        Cold,
-        Hot,
-        Warning,
-        Critical,
-        OutOfRange
+        Collecting,
+        Completed,
     }
 }

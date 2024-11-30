@@ -17,6 +17,7 @@ namespace vaccine_chain_bk.Services.Logs
 
         List<LogDto> FindLogs(CreateLogDto createLogDto);
 
+        string UpdateStatus(string deviceId, string vaccineId);
         string DeleteLog(string deviceId, string vaccineId);
     }
 }

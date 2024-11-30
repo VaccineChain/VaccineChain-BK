@@ -11,5 +11,6 @@ namespace vaccine_chain_bk.Repositories.Logs
         List<Log> FindLog(string deviceId, string vaccineId);
         void SaveLog(Log log);
         void DeleteLog(Log log);
+        void UpdateLog(Log log);
     }
 }

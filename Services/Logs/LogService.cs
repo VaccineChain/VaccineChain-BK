@@ -77,7 +77,6 @@ namespace vaccine_chain_bk.Services.Logs
             foreach (var log in logs)
             {
                 _logRepository.DeleteLog(log);
-                _mapper.Map<LogDto>(log);
             }
 
             return "Remove Log successfully!";
@@ -93,6 +92,24 @@ namespace vaccine_chain_bk.Services.Logs
         {
             List<Log> logs = _logRepository.GetExistConnection(vaccineId, deviceId);
             return _mapper.Map<List<LogDto>>(logs);
+        }
+
+        public string UpdateStatus(string deviceId, string vaccineId)
+        {
+            List<Log> logs = _logRepository.FindLog(deviceId, vaccineId);
+
+            if (logs.Count == 0)
+            {
+                throw new NotFoundException("Not found connections");
+            }
+
+            foreach (var log in logs)
+            {
+                log.Status = Constraints.EStatus.Completed;
+                _logRepository.UpdateLog(log);
+            }
+
+            return "Update Log Status successfully!";
         }
     }
 }

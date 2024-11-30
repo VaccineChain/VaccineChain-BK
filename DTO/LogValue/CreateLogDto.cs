@@ -12,7 +12,7 @@ namespace vaccine_chain_bk.DTO.Log
 
         public DateTime? Timestamp { get; set; }
 
-        public EStatus? Status { get; set; }
+        public EStatus? Status { get; set; } = EStatus.Collecting;
 
         public string VaccineId { get; set; }
 

@@ -3,5 +3,7 @@
     public enum EType
     {
         Temperature,
+        Humidity,
+        Light
     }
 }
