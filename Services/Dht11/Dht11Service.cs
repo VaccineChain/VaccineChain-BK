@@ -24,12 +24,6 @@ namespace vaccine_chain_bk.Services.Dht11
 
         public async void ProcessData(Dht11Dto dht11)
         {
-            if (dht11 == null)
-            {
-                throw new Exception("DHT11 data is null!");
-            }
-
-            // Tạo request cho Smart Contract
             SensorReading smartContractRequest = new()
             {
                 fcn = "addVaccineData",
@@ -48,7 +42,7 @@ namespace vaccine_chain_bk.Services.Dht11
             {
                 // Thêm vào Smart Contract trước
                 var result = await _httpClientService.AddVaccineDataAsync(smartContractRequest);
-
+                
                 Console.WriteLine("Smart Contract Response: " + result);
 
                 // Nếu thành công, tiếp tục thêm vào database
