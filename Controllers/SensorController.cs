@@ -5,6 +5,7 @@ using System.Security.Authentication;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using vaccine_chain_bk.DTO.HyperledgerResponse;
@@ -22,6 +23,7 @@ public class SensorController : ControllerBase
         _httpClientService = httpClientService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
     {
@@ -42,7 +44,6 @@ public class SensorController : ControllerBase
         }
     }
 
-
     [HttpPost("add")]
     public async Task<IActionResult> AddVaccineData([FromBody] SensorReading request)
     {
@@ -60,7 +61,6 @@ public class SensorController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while adding vaccine data.", error = ex.Message });
         }
     }
-
 
     [HttpGet("get/{vaccineId}")]
     public async Task<IActionResult> GetVaccineById(string vaccineId)
