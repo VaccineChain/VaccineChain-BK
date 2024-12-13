@@ -55,7 +55,6 @@ namespace vaccine_chain_bk.Services.Logs
             Log log = _mapper.Map<Log>(createLogDto);
 
             _logRepository.SaveLog(log);
-            _mapper.Map<LogDto>(log);
         }
 
         public List<LogDto> GetAll()

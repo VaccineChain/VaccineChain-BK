@@ -55,11 +55,11 @@ namespace vaccine_chain_bk.Repositories.Logs
         }
 
 
-        public void SaveLog(Log Log)
+        public void SaveLog(Log log)
         {
             try
             {
-                _context.Logs.Add(Log);
+                _context.Logs.Add(log);
                 _context.SaveChanges();
             }
             catch (Exception ex)

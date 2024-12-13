@@ -42,7 +42,7 @@ namespace vaccine_chain_bk.Repositories.Vaccines
         {
             try
             {
-                return _context.Vaccines.Find(id);
+                return _context.Vaccines.FirstOrDefault(u => u.VaccineId == id);
             }
             catch (Exception)   
             {

@@ -10,96 +10,138 @@ namespace vaccine_chain_bk.Services
 {
     public class HttpClientService
     {
-
         private readonly HttpClient _httpClient;
+        private string? _authToken;
 
         public HttpClientService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.Timeout = TimeSpan.FromMinutes(5); // Tăng timeout lên 5 phút
         }
 
+        // Đăng ký người dùng và lấy token
         public async Task<string> RegisterUserAsync(string username, string orgName)
         {
-            var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL");
-
-            // Tạo nội dung JSON cho yêu cầu
-            var userRegistrationRequest = new
+            try
             {
-                username = username,
-                orgName = orgName
-            };
+                var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL") ?? throw new Exception("NODE_VACCINE_URL is not set.");
 
-            var jsonContent = new StringContent(JsonSerializer.Serialize(userRegistrationRequest), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{url}/users", jsonContent);
+                var userRegistrationRequest = new
+                {
+                    username,
+                    orgName
+                };
 
-            // Đảm bảo phản hồi thành công
-            response.EnsureSuccessStatusCode();
+                var jsonContent = new StringContent(
+                    JsonSerializer.Serialize(userRegistrationRequest),
+                    Encoding.UTF8,
+                    "application/json"
+                );
 
-            // Deserialize phản hồi để lấy token
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response from /users: {responseBody}");
+                Console.WriteLine("Registering user...");
 
-            var responseObject = JsonSerializer.Deserialize<RegisterUserResponse>(responseBody, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+                using var response = await _httpClient.PostAsync($"{url}/users", jsonContent);
 
-            if (responseObject == null || string.IsNullOrEmpty(responseObject.Token))
-            {
-                throw new Exception("Failed to register user or retrieve token.");
+                response.EnsureSuccessStatusCode();
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response from /users: {responseBody}");
+
+                var responseObject = JsonSerializer.Deserialize<RegisterUserResponse>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (responseObject == null || string.IsNullOrEmpty(responseObject.Token))
+                {
+                    throw new Exception("Failed to register user or retrieve token.");
+                }
+
+                _authToken = responseObject.Token; // Lưu token để tái sử dụng
+                return _authToken;
             }
-
-            return responseObject.Token;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error registering user: {ex.Message}");
+                throw;
+            }
         }
 
-
+        // Thêm dữ liệu vaccine vào blockchain
         public async Task<string> AddVaccineDataAsync(SensorReading request)
         {
-            var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL");
-
-            string token = await RegisterUserAsync("authenToAdd", "Org1");
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                throw new Exception("Authentication token is missing or invalid.");
+                if (string.IsNullOrEmpty(_authToken))
+                {
+                    Console.WriteLine("Auth token not found, registering user...");
+                    _authToken = await RegisterUserAsync("authenToAdd", "Org1");
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authToken);
+
+                var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL") ?? throw new Exception("NODE_VACCINE_URL is not set.");
+
+                var jsonContent = new StringContent(
+                    JsonSerializer.Serialize(request),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                Console.WriteLine("Sending vaccine data...");
+
+                using var response = await _httpClient.PostAsync($"{url}/channels/mychannel/chaincodes/fabvaccine", jsonContent);
+
+                response.EnsureSuccessStatusCode();
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response from addVaccineData: {responseBody}");
+
+                return responseBody;
             }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{url}/channels/mychannel/chaincodes/fabvaccine", jsonContent);
-
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding vaccine data: {ex.Message}");
+                throw;
+            }
         }
 
+        // Lấy dữ liệu vaccine từ blockchain
         public async Task<List<DataResonse>> GetVaccineByIdAsync(string vaccineId, string token)
         {
-            var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var queryParams = $"?args=[\"{vaccineId}\"]&peer=peer0.org1.example.com&fcn=queryVaccineDataByVaccineID";
-            var response = await _httpClient.GetAsync($"{url}/channels/mychannel/chaincodes/fabvaccine{queryParams}");
-
-            // Đảm bảo phản hồi thành công
-            response.EnsureSuccessStatusCode();
-
-            // Lấy dữ liệu phản hồi JSON
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Body: {responseBody}");
-
-            // Deserialize trực tiếp thành danh sách SensorDTO
-            var sensors = JsonSerializer.Deserialize<List<DataResonse>>(responseBody, new JsonSerializerOptions
+            try
             {
-                PropertyNameCaseInsensitive = true // Bỏ qua phân biệt chữ hoa/thường
-            });
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            if (sensors == null || sensors.Count == 0)
-            {
-                throw new Exception("No data found in the API response.");
+                var url = Environment.GetEnvironmentVariable("NODE_VACCINE_URL") ?? throw new Exception("NODE_VACCINE_URL is not set.");
+
+                var queryParams = $"?args=[\"{vaccineId}\"]&peer=peer0.org1.example.com&fcn=queryVaccineDataByVaccineID";
+
+                Console.WriteLine("Fetching vaccine data...");
+
+                using var response = await _httpClient.GetAsync($"{url}/channels/mychannel/chaincodes/fabvaccine{queryParams}");
+
+                response.EnsureSuccessStatusCode();
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response Body: {responseBody}");
+
+                var sensors = JsonSerializer.Deserialize<List<DataResonse>>(responseBody, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (sensors == null || sensors.Count == 0)
+                {
+                    throw new Exception("No data found in the API response.");
+                }
+
+                return sensors;
             }
-
-            return sensors;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching vaccine data: {ex.Message}");
+                throw;
+            }
         }
-
     }
 }

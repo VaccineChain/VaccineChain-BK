@@ -152,9 +152,6 @@ app.MapControllers();
 // Sử dụng CORS
 app.UseCors("AllowSpecificOrigins");
 
-// Map SignalR Hub
-app.MapHub<TemperatureHub>("/temperatureHub");
-
 
 using (var scope = app.Services.CreateScope())
 {

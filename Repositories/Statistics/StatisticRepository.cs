@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection.PortableExecutable;
+using vaccine_chain_bk.Constraints;
 using vaccine_chain_bk.DTO.Device;
 using vaccine_chain_bk.DTO.Log;
 using vaccine_chain_bk.DTO.Statistic;
@@ -19,6 +20,25 @@ namespace vaccine_chain_bk.Repositories.Statistics
         {
             _context = context;
         }
+
+        public List<VaccineDeviceStatus> GetVaccineStatistics()
+        {
+            var result = (from l in _context.Logs
+                          join v in _context.Vaccines on l.VaccineId equals v.VaccineId
+                          join d in _context.Devices on l.DeviceId equals d.DeviceId
+                          group l by new { v.VaccineId, v.VaccineName, l.Status } into grouped
+                          select new VaccineDeviceStatus
+                          {
+                              VaccineId = grouped.Key.VaccineId,
+                              VaccineName = grouped.Key.VaccineName,
+                              NumberOfDevices = grouped.Select(g => g.DeviceId).Distinct().Count(),
+                              Status = (EStatus)grouped.Key.Status
+                          }).OrderBy(stat => stat.VaccineId).ToList();
+
+            return result;
+        }
+
+
         public List<StatisticAreaChart> GetStatisticsForAreaChart(string vaccineId)
         {
             var logs = _context.Logs

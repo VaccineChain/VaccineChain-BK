@@ -44,6 +44,10 @@ namespace vaccine_chain_bk.Services.Statistics
 
             return _statisticRepository.GetStatisticsByVaccineId(logs, vaccine);
         }
+        public List<VaccineDeviceStatus> GetVaccineStatistics()
+        {
+            return _statisticRepository.GetVaccineStatistics();
+        }
 
         public List<StatisticAreaChart> GetStatisticsForAreaChart(string vaccineId)
         {

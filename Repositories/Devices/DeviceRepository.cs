@@ -43,7 +43,7 @@ namespace vaccine_chain_bk.Repositories.Devices
         {
             try
             {
-                return _context.Devices.Find(id);
+                return _context.Devices.FirstOrDefault(u => u.DeviceId == id);
             }
             catch (Exception)   
             {

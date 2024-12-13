@@ -40,7 +40,6 @@ namespace vaccine_chain_bk.Controllers
             return Ok(allLogs);
         }
 
-
         [HttpGet("GetExistConnection")]
         public IActionResult GetExistConnection([FromQuery] string deviceId, [FromQuery] string vaccineId)
         {

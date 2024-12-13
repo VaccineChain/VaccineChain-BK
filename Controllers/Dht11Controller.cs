@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using vaccine_chain_bk.DTO.Dht11;
@@ -11,17 +12,16 @@ namespace vaccine_chain_bk.Controllers
     [ApiController]
     public class Dht11Controller : ControllerBase
     {
-        private readonly IHubContext<TemperatureHub> _hubContext;
         private readonly IDht11Service _dht11Service;
 
-        public Dht11Controller(IDht11Service dht11Service, IHubContext<TemperatureHub> hubContext)
+        public Dht11Controller(IDht11Service dht11Service)
 {
-            _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext)); // Kiểm tra null để tránh lỗi
             _dht11Service = dht11Service;
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        public IActionResult Post([FromBody] Dht11Dto data)
+        public async Task<IActionResult> Post([FromBody] Dht11Dto data)
         {
             if (data == null)
             {
@@ -29,19 +29,19 @@ namespace vaccine_chain_bk.Controllers
             }
 
             // Log the received data to the console
-            Console.WriteLine($"Received Device ID: {data.deviceId}");
-            Console.WriteLine($"Received Vaccine ID: {data.vaccineId}");
-            Console.WriteLine($"Received Temperature: {data.value}");
+            Console.WriteLine($"Received Device ID: {data.DeviceId}");
+            Console.WriteLine($"Received Vaccine ID: {data.VaccineId}");
+            Console.WriteLine($"Received Temperature: {data.Value}");
 
 
             // Process the data using the service (if necessary)
-            _dht11Service.ProcessData(data);
+            string res = await _dht11Service.ProcessData(data);
 
             // Respond with a success message
             return Ok(new
             {
-                message = "Data saved successfully.",
-                temperature = data.value
+                message = res,
+                temperature = data.Value
             });
         }
 

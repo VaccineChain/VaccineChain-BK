@@ -4,8 +4,6 @@ namespace vaccine_chain_bk.DTO.Log
 {
     public class CreateLogDto
     {
-        public int? TemperatureId { get; set; }
-
         public double? Value { get; set; }
 
         public string? Unit { get; set; }

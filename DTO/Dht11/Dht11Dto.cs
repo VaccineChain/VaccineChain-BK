@@ -2,9 +2,9 @@
 {
     public class Dht11Dto
     {
-        public string vaccineId { get; set; }
-        public string deviceId { get; set; }
-        public double value { get; set; }
+        public string VaccineId { get; set; }
+        public string DeviceId { get; set; }
+        public double Value { get; set; }
 
     }
 }

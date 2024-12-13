@@ -37,6 +37,24 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
+        [HttpGet("GetVaccineStatistics")]
+        public IActionResult GetVaccineStatistics()
+        {
+            try
+            {
+                List<VaccineDeviceStatus> vaccineDeviceStatuses = _statisticService.GetVaccineStatistics();
+                return Ok(vaccineDeviceStatuses);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         [HttpGet("Area-Chart/{vaccineId}")]
         public IActionResult GetStatisticsForAreaChart(string vaccineId)
         {
