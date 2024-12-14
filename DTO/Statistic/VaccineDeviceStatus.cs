@@ -7,7 +7,6 @@ namespace vaccine_chain_bk.DTO.Statistic
         public string VaccineId { get; set; }
         public string VaccineName { get; set; }
         public int NumberOfDevices { get; set; }
-        public EStatus Status { get; set; }
+        public string Status { get; set; }
     }
-
 }

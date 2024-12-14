@@ -9,5 +9,8 @@ namespace vaccine_chain_bk.Services.Statistics
         StatisticLogsByVaccineId GetStatisticLog(string vaccineId);
         List<StatisticAreaChart> GetStatisticsForAreaChart(string vaccineId);
         List<VaccineDeviceStatus> GetVaccineStatistics();
+        List<VaccinesTemperatureRangeDto> VaccinesTemperatureRange();
+        List<DataCollectionStatusDto> DataCollectionStatus();
+        ConnectionOverviewDto ConnectionOverview();
     }
 }
