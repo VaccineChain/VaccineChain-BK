@@ -54,5 +54,20 @@ namespace vaccine_chain_bk.Services.Statistics
             List<StatisticAreaChart> statisticLogs = _statisticRepository.GetStatisticsForAreaChart(vaccineId);
             return statisticLogs;
         }
+
+        public List<VaccinesTemperatureRangeDto> VaccinesTemperatureRange()
+        {
+            return _statisticRepository.VaccinesTemperatureRange();
+        }
+
+        public List<DataCollectionStatusDto> DataCollectionStatus()
+        {
+            return _statisticRepository.DataCollectionStatus();
+        }
+
+        public ConnectionOverviewDto ConnectionOverview()
+        {
+            return _statisticRepository.ConnectionOverview();
+        }
     }
 }

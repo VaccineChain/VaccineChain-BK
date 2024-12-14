@@ -32,7 +32,7 @@ namespace vaccine_chain_bk.Repositories.Statistics
                               VaccineId = grouped.Key.VaccineId,
                               VaccineName = grouped.Key.VaccineName,
                               NumberOfDevices = grouped.Select(g => g.DeviceId).Distinct().Count(),
-                              Status = (EStatus)grouped.Key.Status
+                              Status = grouped.Key.Status.ToString()
                           }).OrderBy(stat => stat.VaccineId).ToList();
 
             return result;
@@ -97,5 +97,97 @@ namespace vaccine_chain_bk.Repositories.Statistics
             return statistics;
         }
 
+        public List<VaccinesTemperatureRangeDto> VaccinesTemperatureRange()
+        {
+            List<VaccinesTemperatureRangeDto> result = (from l in _context.Logs
+                                                        join d in _context.Devices on l.DeviceId equals d.DeviceId
+                                                        join v in _context.Vaccines on l.VaccineId equals v.VaccineId
+                                                        join ds in _context.Doses on v.VaccineId equals ds.VaccineId
+                                                        where d.SensorType == 0 && l.Value != null
+                                                        group new { l.Value } by v.VaccineName into g
+                                                        select new VaccinesTemperatureRangeDto
+                                                        {
+                                                            VaccineName = g.Key,
+                                                            HighestTemperature = g.Max(x => x.Value),
+                                                            LowestTemperature = g.Min(x => x.Value)
+                                                        }).ToList();
+
+            return result;
+        }
+
+        public List<DataCollectionStatusDto> DataCollectionStatus()
+        {
+            // Devices
+            var totalDevices = _context.Devices.Count();
+            var devicesCollecting = _context.Logs
+                .Select(l => l.DeviceId)
+                .Distinct()
+                .Count();
+            var devicesCompleted = totalDevices - devicesCollecting;
+
+            // Vaccines
+            var totalVaccines = _context.Vaccines.Count();
+            var vaccinesCollecting = _context.Logs
+                .Select(l => l.VaccineId)
+                .Distinct()
+                .Count();
+            var vaccinesCompleted = totalVaccines - vaccinesCollecting;
+
+            // Combine results
+            List<DataCollectionStatusDto> result = new List<DataCollectionStatusDto>
+            {
+                new DataCollectionStatusDto
+                {
+                    Category = "Devices",
+                    Collecting = devicesCollecting,
+                    Completed = devicesCompleted
+                },
+                new DataCollectionStatusDto
+                {
+                    Category = "Vaccines",
+                    Collecting = vaccinesCollecting,
+                    Completed = vaccinesCompleted
+                }
+            };
+
+            return result;
+        }
+
+        public ConnectionOverviewDto ConnectionOverview()
+        {
+            // Total distinct connections (VaccineId, DeviceId) in Logs
+            var totalConnection = _context.Logs
+                .Select(l => new { l.VaccineId, l.DeviceId })
+                .Distinct()
+                .Count();
+
+            // Devices not connected (not appearing in Logs)
+            var notConnectedDevices = _context.Devices
+                .GroupJoin(_context.Logs,
+                           device => device.DeviceId,
+                           log => log.DeviceId,
+                           (device, logs) => new { Device = device, Logs = logs })
+                .Where(group => !group.Logs.Any())
+                .Count();
+
+            // Vaccines not connected (not appearing in Logs)
+            var notConnectedVaccines = _context.Vaccines
+                .GroupJoin(_context.Logs,
+                           vaccine => vaccine.VaccineId,
+                           log => log.VaccineId,
+                           (vaccine, logs) => new { Vaccine = vaccine, Logs = logs })
+                .Where(group => !group.Logs.Any())
+                .Count();
+
+            // Prepare response
+            ConnectionOverviewDto result = new ConnectionOverviewDto
+            {
+                TotalConnection = totalConnection,
+                NotConnectedDevice = notConnectedDevices,
+                NotConnectedVaccine = notConnectedVaccines
+            };
+
+            return result;
+        }
     }
 }

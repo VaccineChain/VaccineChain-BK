@@ -37,7 +37,7 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
-        [HttpGet("GetVaccineStatistics")]
+        [HttpGet("Vaccine-Device-Status")]
         public IActionResult GetVaccineStatistics()
         {
             try
@@ -73,5 +73,58 @@ namespace vaccine_chain_bk.Controllers
             }
         }
 
+        [HttpGet("Vaccines-Temperature-Range")]
+        public IActionResult VaccinesTemperatureRange()
+        {
+            try
+            {
+                List<VaccinesTemperatureRangeDto> statisticLogs = _statisticService.VaccinesTemperatureRange();
+                return Ok(statisticLogs);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("Data-Collection-Status")]
+        public IActionResult DataCollectionStatus()
+        {
+            try
+            {
+                List<DataCollectionStatusDto> statisticLogs = _statisticService.DataCollectionStatus();
+                return Ok(statisticLogs);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("Connection-Overview")]
+        public IActionResult ConnectionOverview()
+        {
+            try
+            {
+                ConnectionOverviewDto statisticLogs = _statisticService.ConnectionOverview();
+                return Ok(statisticLogs);
+            }
+            catch (NotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
