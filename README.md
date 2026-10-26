@@ -3,6 +3,8 @@
 <p align="center">
   <strong>Backend API for Blockchain-Based Vaccine Cold Chain Monitoring</strong>
   <br />
+  <img width="943" height="689" alt="image" src="https://github.com/user-attachments/assets/31e4f2c4-579a-476a-a8f7-ac64888c5e89" />
+
   ASP.NET Core · SQL Server · Hyperledger Fabric · JWT Authentication
 </p>
 
