@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/31e4f2c4-579a-476a-a8f7-ac64888c5e89" width="843" alt="VaccineChain Backend preview" />
+  <img src="https://github.com/user-attachments/assets/31e4f2c4-579a-476a-a8f7-ac64888c5e89" width="443" alt="VaccineChain Backend preview" />
 </p>
 
 <p align="center">
